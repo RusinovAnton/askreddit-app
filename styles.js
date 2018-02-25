@@ -22,6 +22,7 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderLeftColor: '#ff9900',
     borderLeftWidth: 5,
+    overflow: 'hidden',
     padding: 15,
   },
 });
