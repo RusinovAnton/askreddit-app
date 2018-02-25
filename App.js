@@ -1,23 +1,35 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import {
+  ThemeProvider,
+  Toolbar,
+  ToolbarAction,
+  ToolbarBackAction,
+  ToolbarContent,
+  DrawerSection,
+  DrawerItem,
+} from 'react-native-paper';
+import { Platform, Text, View, ScrollView } from 'react-native';
+import ThreadList from './components/ThreadList';
+import styles, { theme } from './styles';
+import AppToolbar from './components/AppToolbar';
 
 export default class App extends React.Component {
+  constructor(props, context) {
+    super(props, context);
+
+    this.state = {
+      active: 0,
+    };
+  }
+
   render() {
     return (
-      <View style={styles.container}>
-        <Text>Open up App.js to start working on your app!</Text>
-        <Text>Changes you make will automatically reload.</Text>
-        <Text>Shake your phone to open the developer menu.</Text>
-      </View>
+      <ThemeProvider theme={theme}>
+        <View>
+          <AppToolbar />
+          <ThreadList />
+        </View>
+      </ThemeProvider>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
