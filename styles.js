@@ -17,14 +17,6 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  threadItem: {
-    borderBottomColor: '#f0f0f0',
-    borderBottomWidth: 1,
-    borderLeftColor: '#ff9900',
-    borderLeftWidth: 5,
-    overflow: 'hidden',
-    padding: 15,
-  },
 });
 
 export default styles;

@@ -1,64 +1,122 @@
 import React from 'react';
-import { ScrollView } from 'react-native';
+import {
+  ActivityIndicator,
+  Text,
+  View,
+  ScrollView,
+  StyleSheet,
+} from 'react-native';
+import { Button } from 'react-native-paper';
 
-import ThreadItem from './ThreadItem';
+import ThreadListItem from './ThreadListItem';
+import api from '../modules/RedditApi';
+
+const ThreadListFooter = ({ children }) => {
+  return (
+    <View
+      style={{
+        backgroundColor: '#ff5588',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'row',
+        height: 70,
+      }}
+    >
+      {children}
+    </View>
+  );
+};
 
 class ThreadList extends React.Component {
   constructor(props, context) {
     super(props, context);
 
     this.state = {
+      after: null,
+      before: null,
+      isLoading: false,
       items: [],
     };
+
+    this.fetchAskredditThreadList = this.fetchAskredditThreadList.bind(this);
   }
 
   componentDidMount() {
     this.fetchAskredditThreadList();
   }
 
-  fetchAskredditThreadList = () => {
-    fetch('https://www.reddit.com/r/AskReddit/.json')
-      .then(res => res.json())
-      .then(this.updateThreadList)
-      .catch(console.error);
-  };
+  async fetchAskredditThreadList(params) {
+    this.setState({ isLoading: true });
+    try {
+      const data = await api.threadList(params);
+
+      this.setState({ isLoading: false, error: null });
+      this.updateThreadList(data);
+    } catch (error) {
+      console.error(error);
+      this.setState({ error: error.toString(), isLoading: false });
+    }
+  }
 
   updateThreadList = ({ data }) => {
-    const items = data.children.reduce((result, thread) => {
-      if (!thread.kind) {
-        return result;
-      }
+    const { children, after, before } = data;
 
-      const {
-        created,
-        hide_score,
-        id,
-        num_comments,
-        permalink,
-        score,
-        title,
-        url,
-        visited,
-      } = thread.data;
+    const items = data.children.reduce(
+      (result, thread) => {
+        if (!thread.kind) {
+          return result;
+        }
 
-      return result.concat({
-        created,
-        hide_score,
-        id,
-        num_comments,
-        permalink,
-        score,
-        title,
-        url,
-        visited,
-      });
-    }, []);
+        const {
+          created,
+          hide_score,
+          id,
+          num_comments,
+          permalink,
+          score,
+          title,
+          url,
+          visited,
+        } = thread.data;
 
-    this.setState({ items });
+        return result.concat({
+          created,
+          hide_score,
+          id,
+          num_comments,
+          permalink,
+          score,
+          title,
+          url,
+          visited,
+        });
+      },
+      [...this.state.items],
+    );
+
+    this.setState({ after, before, items });
+  };
+
+  loadMore = () => {
+    this.fetchAskredditThreadList({ after: this.state.after });
+  };
+
+  loadMoreButtonLabel = () => {
+    const { after, isLoading } = this.state;
+
+    let label = '';
+
+    if (isLoading) {
+      label = 'Loading...';
+    } else if (!!after) {
+      label = 'Load more';
+    }
+
+    return label;
   };
 
   render() {
-    const { items, error } = this.state;
+    const { after, items, error, isLoading } = this.state;
 
     if (error) {
       return <Text>{error}</Text>;
@@ -66,7 +124,17 @@ class ThreadList extends React.Component {
 
     return (
       <ScrollView>
-        {items.map(thread => <ThreadItem key={thread.id} {...thread} />)}
+        {items.map(thread => <ThreadListItem key={thread.id} {...thread} />)}
+        <ThreadListFooter>
+          <Button
+            raised
+            disabled={isLoading}
+            loading={isLoading}
+            onPress={this.loadMore}
+          >
+            {this.loadMoreButtonLabel()}
+          </Button>
+        </ThreadListFooter>
       </ScrollView>
     );
   }

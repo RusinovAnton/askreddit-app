@@ -10,7 +10,7 @@ import {
 class AppToolbar extends React.Component {
   render() {
     return (
-      <Toolbar statusBarHeight={Platform.OS === 'android' ? 20 : 0}>
+      <Toolbar statusBarHeight={20}>
         <ToolbarContent title="/r/Askreddit" dark />
         <ToolbarAction icon="more-vert" dark />
       </Toolbar>

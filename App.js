@@ -5,10 +5,8 @@ import {
   ToolbarAction,
   ToolbarBackAction,
   ToolbarContent,
-  DrawerSection,
-  DrawerItem,
 } from 'react-native-paper';
-import { Platform, Text, View, ScrollView } from 'react-native';
+import { Platform, Text, View, ScrollView, StyleSheet } from 'react-native';
 import ThreadList from './components/ThreadList';
 import styles, { theme } from './styles';
 import AppToolbar from './components/AppToolbar';
@@ -24,8 +22,8 @@ export default class App extends React.Component {
 
   render() {
     return (
-      <ThemeProvider theme={theme}>
-        <View>
+      <ThemeProvider>
+        <View style={StyleSheet.absoluteFill}>
           <AppToolbar />
           <ThreadList />
         </View>
