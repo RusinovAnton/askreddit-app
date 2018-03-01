@@ -11,20 +11,18 @@ import { Button } from 'react-native-paper';
 import ThreadListItem from './ThreadListItem';
 import api from '../modules/RedditApi';
 
+const styles = StyleSheet.create({
+  footer: {
+    backgroundColor: 'rgba(255,255,255,0.4)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    height: 70,
+  },
+});
+
 const ThreadListFooter = ({ children }) => {
-  return (
-    <View
-      style={{
-        backgroundColor: '#ff5588',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexDirection: 'row',
-        height: 70,
-      }}
-    >
-      {children}
-    </View>
-  );
+  return <View style={styles.footer}>{children}</View>;
 };
 
 class ThreadList extends React.Component {
@@ -33,9 +31,9 @@ class ThreadList extends React.Component {
 
     this.state = {
       after: null,
-      before: null,
       isLoading: false,
       items: [],
+      error: null,
     };
 
     this.fetchAskredditThreadList = this.fetchAskredditThreadList.bind(this);
@@ -94,7 +92,7 @@ class ThreadList extends React.Component {
       [...this.state.items],
     );
 
-    this.setState({ after, before, items });
+    this.setState({ after, items });
   };
 
   loadMore = () => {
@@ -124,10 +122,9 @@ class ThreadList extends React.Component {
 
     return (
       <ScrollView>
-        {items.map(thread => <ThreadListItem key={thread.id} {...thread} />)}
+        {items.map((thread) => <ThreadListItem key={thread.id} {...thread} />)}
         <ThreadListFooter>
           <Button
-            raised
             disabled={isLoading}
             loading={isLoading}
             onPress={this.loadMore}
